@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TAIWAN TRIP PLAN</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@500;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans JP"', 'sans-serif'],
+            rounded: ['"M PLUS Rounded 1c"', 'sans-serif'],
+          },
+          colors: {
+            day1: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' }, // オレンジ (台北)
+            day2: { bg: '#f0fdf4', card: '#dcfce7', border: '#86efac', text: '#16a34a' }, // グリーン (九份)
+            day3: { bg: '#fdf2f8', card: '#fce7f3', border: '#f9a8d4', text: '#db2777' }, // ピンク (台北)
+            day4: { bg: '#f0f9ff', card: '#e0f2fe', border: '#7dd3fc', text: '#0284c7' }, // ブルー (淡水)
+            day5: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' }, // オレンジ (台北)
+            day6: { bg: '#f9fafb', card: '#f3f4f6', border: '#d1d5db', text: '#4b5563' }, // グレー (桃園)
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { -webkit-tap-highlight-color: transparent; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .timeline-line::before {
+      content: '';
+      position: absolute;
+      top: 24px; bottom: -24px; left: 24px;
+      width: 2px;
+      background: #e5e7eb;
+      z-index: 0;
+    }
+    .timeline-item:last-child .timeline-line::before { display: none; }
+    
+    .timeline-dash::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 24px;
+      width: 2px;
+      background-image: linear-gradient(to bottom, #9ca3af 50%, transparent 50%);
+      background-size: 2px 8px;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="tripApp()">
+
+  <header class="bg-white px-6 py-4 shadow-sm sticky top-0 z-30 flex justify-center items-center gap-2">
+    <h1 class="text-2xl font-rounded font-bold text-gray-800 text-center">🇹🇼 台湾旅行プラン</h1>
+  </header>
+
+  <nav class="bg-white shadow-sm sticky top-[64px] z-20 flex overflow-x-auto no-scrollbar border-b border-gray-100">
+    <template x-for="(day, index) in itinerary" :key="index">
+      <button 
+        @click="activeTab = index; window.scrollTo({top: 0, behavior: 'smooth'})" 
+        class="flex-none w-[28%] py-3 px-1 text-center transition-all duration-300 relative border-b-4"
+        :class="[
+          activeTab === index ? day.textClass : 'text-gray-400 border-transparent',
+          activeTab === index ? day.borderClass : ''
+        ]">
+        <div class="font-rounded text-lg font-bold leading-tight" x-text="day.date"></div>
+        <div class="text-[11px] font-bold mt-0.5" x-text="day.area"></div>
+      </button>
+    </template>
+  </nav>
+
+  <main class="p-4 pb-32 max-w-lg mx-auto min-h-screen transition-colors duration-500" :class="itinerary[activeTab].bgClass">
+    
+    <div class="mb-4 flex justify-end" x-show="itinerary[activeTab].routeUrl" x-transition>
+      <a :href="itinerary[activeTab].routeUrl" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full shadow-sm bg-white border cursor-pointer active:scale-95 transition-transform"
+         :class="itinerary[activeTab].borderClass">
+        <i class="ph ph-map-trifold text-xl" :class="itinerary[activeTab].textClass"></i>
+        <span class="text-sm font-bold" :class="itinerary[activeTab].textClass">この日のルートをMapで開く</span>
+      </a>
+    </div>
+
+    <div class="relative mt-2">
+      <template x-for="(spot, spotIndex) in itinerary[activeTab].spots" :key="spotIndex">
+        <div>
+          <template x-if="spot.transit">
+            <div class="relative pl-16 py-3">
+              <div class="timeline-dash"></div>
+              <div class="text-xs font-bold text-gray-500 bg-white/80 inline-block px-2 rounded-full relative z-10">
+                <i class="ph ph-dots-three-vertical align-middle"></i> <span x-text="spot.transit"></span>
+              </div>
+            </div>
+          </template>
+
+          <div x-show="!spot.transit" class="timeline-item relative pl-16 mb-6">
+            <div class="timeline-line absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center">
+              <div class="w-12 text-right pr-3 pt-1">
+                <span class="text-[11px] font-bold text-gray-500" x-text="spot.time || ''"></span>
+              </div>
+              <div class="w-3 h-3 rounded-full border-2 bg-white absolute top-1.5 left-[22px] z-10 shadow-sm" :class="itinerary[activeTab].borderClass"></div>
+            </div>
+
+            <div @click="openModal(spot)" class="rounded-xl p-4 shadow-sm border cursor-pointer active:scale-95 transition-transform" :class="[itinerary[activeTab].cardClass, itinerary[activeTab].borderClass]">
+              <h3 class="font-rounded text-lg font-bold mb-1" :class="itinerary[activeTab].textClass" x-text="spot.name"></h3>
+              <p class="text-xs text-gray-600 line-clamp-2" x-text="spot.desc"></p>
+              
+              <div class="mt-3 h-28 rounded-lg overflow-hidden relative bg-gray-200">
+                <img :src="spot.image" class="w-full h-full object-cover opacity-90 transition-opacity duration-300" alt="">
+                <div class="absolute inset-0 bg-black/10 flex items-center justify-center">
+                  <span class="bg-black/50 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">詳細を見る</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </main>
+
+  <div x-show="isModalOpen" style="display: none;" class="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" x-transition.opacity>
+    <div @click.away="closeModal()" class="bg-white w-full rounded-t-3xl overflow-hidden h-[85vh] flex flex-col shadow-2xl"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="transform translate-y-full"
+         x-transition:enter-end="transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="transform translate-y-0"
+         x-transition:leave-end="transform translate-y-full">
+      
+      <div class="relative h-56 bg-gray-200">
+        <img :src="currentSpot.image" alt="スポット画像" class="w-full h-full object-cover">
+        <button @click="closeModal()" class="absolute top-4 right-4 bg-white/80 rounded-full p-2 backdrop-blur-md">
+          <i class="ph ph-x text-xl"></i>
+        </button>
+      </div>
+
+      <div class="p-6 flex-1 overflow-y-auto">
+        <h2 class="font-rounded text-2xl font-bold text-gray-900 mb-2" x-text="currentSpot.name"></h2>
+        <p class="text-sm text-gray-600 mb-6 leading-relaxed" x-text="currentSpot.desc"></p>
+        
+        <div class="flex items-center gap-2 mb-3">
+          <i class="ph ph-map-pin-line text-lg" :class="itinerary[activeTab].textClass"></i>
+          <h3 class="font-bold text-gray-800">Google Map</h3>
+        </div>
+        
+        <div class="rounded-xl overflow-hidden shadow-inner h-64 bg-gray-100 border border-gray-200 relative">
+          <iframe width="100%" height="100%" frameborder="0" style="border:0" 
+            :src="'https://maps.google.com/maps?q=' + encodeURIComponent(currentSpot.mapQuery) + '&t=&z=15&ie=UTF8&iwloc=&output=embed'" allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('tripApp', () => ({
+        activeTab: 0,
+        isModalOpen: false,
+        currentSpot: {},
+        itinerary: [
+          {
+            date: "4/2(木)", area: "台北", 
+            bgClass: "bg-day1-bg", cardClass: "bg-day1-card", borderClass: "border-day1-border", textClass: "text-day1-text",
+            routeUrl: "https://www.google.com/maps/dir/?api=1&origin=台湾桃園国際空港&destination=象山+台北&waypoints=松山慈祐宮%7C饒河街観光夜市",
+            spots: [
+              { time: "15:10", name: "台湾桃園国際空港", desc: "Arrival. いよいよ台湾旅行のスタートです！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
+              { transit: "40分" },
+              { time: "", name: "松山慈祐宮", desc: "夜市のすぐ隣にある、装飾が美しい道教の寺院。", mapQuery: "松山慈祐宮", wikiQuery: "松山慈祐宮", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "饒河街観光夜市", desc: "活気あふれる夜市で、名物の胡椒餅などを食べ歩き。", mapQuery: "饒河街観光夜市", wikiQuery: "饒河街観光夜市", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" },
+              { time: "21:00", name: "象山", desc: "少し階段を登り、台北101の輝く夜景を一望！", mapQuery: "象山 台北", wikiQuery: "象山 (台北市)", image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" }
+            ]
+          },
+          {
+            date: "4/3(金)", area: "九份",
+            bgClass: "bg-day2-bg", cardClass: "bg-day2-card", borderClass: "border-day2-border", textClass: "text-day2-text",
+            routeUrl: "https://www.google.com/maps/dir/?api=1&origin=八徳東寧路口&destination=基山街+九份&waypoints=九份老街%7C阿妹茶楼%7C豎崎路%7C九份景観台",
+            spots: [
+              { time: "", name: "八徳東寧路口", desc: "ここからバスに乗車して九份へ向かいます。", mapQuery: "八徳東寧路口", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
+              { transit: "71分" },
+              { time: "09:50", name: "九份老街", desc: "赤提灯が並ぶレトロでノスタルジックな街並みを散策。", mapQuery: "九份老街", wikiQuery: "九份", image: "https://images.unsplash.com/photo-1577908993883-7c30a476dbb3?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "九份の茶房", desc: "九戸茶語、九份茶坊、阿妹茶楼などで景色を見ながら一休み。", mapQuery: "阿妹茶楼", wikiQuery: "九份", image: "https://images.unsplash.com/photo-1627993427218-12461ec4dfae?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "賢崎路", desc: "九份といえばここ！という有名な石段の小道。", mapQuery: "豎崎路", wikiQuery: "九份", image: "https://images.unsplash.com/photo-1557088496-07a2c070f612?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "九份景観台", desc: "海と山を見渡せる絶景スポット。", mapQuery: "九份景観台", wikiQuery: "九份", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "基山街", desc: "お土産屋や食べ歩きグルメがひしめく賑やかな通り。", mapQuery: "基山街 九份", wikiQuery: "九份", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" }
+            ]
+          },
+          {
+            date: "4/4(土)", area: "台北",
+            bgClass: "bg-day3-bg", cardClass: "bg-day3-card", borderClass: "border-day3-border", textClass: "text-day3-text",
+            routeUrl: "https://www.google.com/maps/dir/?api=1&origin=国立故宮博物院&destination=士林夜市&waypoints=国民革命忠烈祠",
+            spots: [
+              { time: "", name: "国立故宮博物院", desc: "歴代中国の至宝が集まる世界屈指の博物館。", mapQuery: "国立故宮博物院", wikiQuery: "国立故宮博物院", image: "https://images.unsplash.com/photo-1590494056345-d85c54ce2813?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "忠烈祠", desc: "衛兵交代式は一見の価値あり！", mapQuery: "国民革命忠烈祠", wikiQuery: "国民革命忠烈祠", image: "https://images.unsplash.com/photo-1588661794770-0081d092eac4?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "士林夜市", desc: "台北最大規模の夜市で、台湾グルメを遊び尽くす。", mapQuery: "士林夜市", wikiQuery: "士林夜市", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" }
+            ]
+          },
+          {
+            date: "4/5(日)", area: "淡水",
+            bgClass: "bg-day4-bg", cardClass: "bg-day4-card", borderClass: "border-day4-border", textClass: "text-day4-text",
+            routeUrl: "https://www.google.com/maps/dir/?api=1&origin=MRT淡水駅&destination=雲門劇場&waypoints=淡水老街%7C淡水礼拝堂%7C正宗阿給老店",
+            spots: [
+              { time: "10:00", name: "淡水駅", desc: "台北からMRTで到着。台湾のベニスへ。", mapQuery: "MRT淡水駅", wikiQuery: "淡水駅", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
+              { transit: "40分" },
+              { time: "", name: "淡水老街", desc: "川沿いの遊歩道を散歩しながら食べ歩き。", mapQuery: "淡水老街", wikiQuery: "淡水区", image: "https://images.unsplash.com/photo-1627993427218-12461ec4dfae?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "淡水礼拝堂", desc: "赤レンガ造りの美しい教会。", mapQuery: "淡水礼拝堂", wikiQuery: "淡水礼拝堂", image: "https://images.unsplash.com/photo-1557088496-07a2c070f612?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "正宗阿給老店", desc: "淡水名物「阿給（アゲ）」の発祥の地。", mapQuery: "正宗阿給老店", wikiQuery: "淡水区", image: "https://images.unsplash.com/photo-1596701880572-132d0ce59bb7?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "雲門劇場", desc: "緑に囲まれた美しい現代建築の劇場。", mapQuery: "雲門劇場", wikiQuery: "雲門舞集", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
+            ]
+          },
+          {
+            date: "4/6(月)", area: "台北",
+            bgClass: "bg-day5-bg", cardClass: "bg-day5-card", borderClass: "border-day5-border", textClass: "text-day5-text",
+            routeUrl: "https://www.google.com/maps/dir/?api=1&origin=台北101&destination=迪化街&waypoints=国立中正紀念堂%7C中華民国総統府%7C剝皮寮歷史街区%7C艋舺龍山寺%7C西門紅楼",
+            spots: [
+              { time: "", name: "台北101", desc: "台湾のシンボル！展望台やショッピングを満喫。", mapQuery: "台北101", wikiQuery: "台北101", image: "https://images.unsplash.com/photo-1583335513577-224b12745305?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "国立中正紀念堂", desc: "壮大なスケールの真っ白な記念堂。", mapQuery: "国立中正紀念堂", wikiQuery: "中正紀念堂", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "中華民国総統府", desc: "レンガ造りが美しいルネサンス様式の建築。", mapQuery: "中華民国総統府", wikiQuery: "中華民国総統府", image: "https://images.unsplash.com/photo-1557088496-07a2c070f612?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "剝皮寮歷史街区", desc: "古い街並みが保存されたレトロな写真スポット。", mapQuery: "剝皮寮歷史街区", wikiQuery: "剝皮寮", image: "https://images.unsplash.com/photo-1588661794770-0081d092eac4?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "龍山寺", desc: "台北随一のパワースポットでお参り。", mapQuery: "龍山寺", wikiQuery: "艋舺龍山寺", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "西門町 (西門紅楼/16工房)", desc: "台湾の原宿。赤レンガの紅楼やクリエイターのお店巡り。", mapQuery: "西門紅楼", wikiQuery: "西門町", image: "https://images.unsplash.com/photo-1583335513577-224b12745305?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "迪化街", desc: "歴史的な問屋街。お土産のからすみやドライフルーツを買うならここ。", mapQuery: "迪化街", wikiQuery: "迪化街", image: "https://images.unsplash.com/photo-1577908993883-7c30a476dbb3?auto=format&fit=crop&w=600&q=80" }
+            ]
+          },
+          {
+            date: "4/7(火)", area: "桃園",
+            bgClass: "bg-day6-bg", cardClass: "bg-day6-card", borderClass: "border-day6-border", textClass: "text-day6-text",
+            routeUrl: "https://www.google.com/maps/search/?api=1&query=台湾桃園国際空港",
+            spots: [
+              { time: "", name: "空港観光", desc: "出発まで、空港内でのんびりお土産探しや食事を。", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
+              { transit: "40分" },
+              { time: "15:30", name: "台湾桃園国際空港", desc: "Departure. 気をつけて帰ってきてくださいね！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
+            ]
+          }
+        ],
+        async init() {
+          // 初期化時に、Wikipedia APIを使って本物の写真を自動取得して差し替える
+          for (let i = 0; i < this.itinerary.length; i++) {
+            for (let j = 0; j < this.itinerary[i].spots.length; j++) {
+              let spot = this.itinerary[i].spots[j];
+              if (!spot.transit && spot.wikiQuery) {
+                this.fetchWikiImage(spot.wikiQuery).then(url => {
+                  if (url) {
+                    this.itinerary[i].spots[j].image = url;
+                  }
+                });
+              }
+            }
+          }
+        },
+        async fetchWikiImage(query) {
+          try {
+            // WikipediaのAPIを叩いてメイン画像を取得
+            const url = `https://ja.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=800&origin=*`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const pages = data.query.pages;
+            const pageId = Object.keys(pages)[0];
+            if (pageId !== "-1" && pages[pageId].thumbnail) {
+              return pages[pageId].thumbnail.source;
+            }
+            return null; // 見つからない場合は初期設定の予備画像を表示
+          } catch (e) {
+            return null;
+          }
+        },
+        openModal(spot) {
+          this.currentSpot = spot;
+          this.isModalOpen = true;
+          document.body.style.overflow = 'hidden';
+        },
+        closeModal() {
+          this.isModalOpen = false;
+          document.body.style.overflow = '';
+        }
+      }))
+    })
+  </script>
+</body>
+</html>
