@@ -334,19 +334,26 @@
             <h3 class="font-rounded font-bold text-slate-800"><i class="ph ph-currency-circle-dollar mr-1"></i>通貨換算 (台湾ドル⇄円)</h3>
             <span class="text-[10px] text-gray-500" x-text="'1 TWD = ' + rate.toFixed(2) + ' JPY'"></span>
           </div>
-          <div class="p-5 flex flex-col gap-4">
-            <div class="flex items-center gap-3">
-              <span class="font-bold text-lg text-slate-700 w-12 text-right">NT$</span>
-              <input type="number" x-model="twd" @input="calcJpy()" class="flex-1 bg-slate-50 border border-slate-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-right font-bold" placeholder="台湾ドル">
+          
+          <div class="p-4 flex flex-col gap-3">
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <span class="text-slate-500 font-bold text-lg">NT$</span>
+              </div>
+              <input type="number" x-model="twd" @input="calcJpy()" class="bg-slate-50 border border-slate-300 text-gray-900 text-xl rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-16 py-3 pr-4 text-right font-bold" placeholder="0">
             </div>
-            <div class="flex justify-center text-slate-400">
+            
+            <div class="flex justify-center text-slate-400 -my-1">
               <i class="ph ph-arrows-down-up text-xl"></i>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="font-bold text-lg text-slate-700 w-12 text-right">¥</span>
-              <input type="number" x-model="jpy" @input="calcTwd()" class="flex-1 bg-slate-50 border border-slate-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-right font-bold" placeholder="日本円">
+            
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <span class="text-slate-500 font-bold text-lg">¥</span>
+              </div>
+              <input type="number" x-model="jpy" @input="calcTwd()" class="bg-slate-50 border border-slate-300 text-gray-900 text-xl rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-12 py-3 pr-4 text-right font-bold" placeholder="0">
             </div>
-            <p class="text-[10px] text-gray-400 text-center">※最新のリアルタイム為替レートを自動取得して計算します。通信できない場合は目安のレート(1TWD=4.8円)を使用します。</p>
+            <p class="text-[10px] text-gray-400 text-center mt-1">※最新のリアルタイム為替レートを自動取得して計算します。通信できない場合は目安のレートを使用します。</p>
           </div>
         </div>
 
@@ -427,9 +434,7 @@
     </div>
   </div>
 
-
   <script>
-    // Firebaseの準備ができるまで待機する仕組み
     window.firebaseDb = null;
   </script>
   
@@ -437,35 +442,21 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
     import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
-    // ▼▼▼ Firebaseで取得した情報をここに貼り付けます ▼▼▼
     const firebaseConfig = {
+      apiKey: "AIzaSyDHENSt3ZfgPpQkqVkrnGDP8HFpSOrSsxw",
+      authDomain: "taiwan-trip-8efe0.firebaseapp.com",
+      databaseURL: "https://taiwan-trip-8efe0-default-rtdb.firebaseio.com",
+      projectId: "taiwan-trip-8efe0",
+      storageBucket: "taiwan-trip-8efe0.firebasestorage.app",
+      messagingSenderId: "300493256338",
+      appId: "1:300493256338:web:dbc4f088feb74c92a3584b",
+      measurementId: "G-KBXEDT6Z1L"
+    };
 
-    apiKey: "AIzaSyDHENSt3ZfgPpQkqVkrnGDP8HFpSOrSsxw",
-
-    authDomain: "taiwan-trip-8efe0.firebaseapp.com",
-
-    databaseURL: "https://taiwan-trip-8efe0-default-rtdb.firebaseio.com",
-
-    projectId: "taiwan-trip-8efe0",
-
-    storageBucket: "taiwan-trip-8efe0.firebasestorage.app",
-
-    messagingSenderId: "300493256338",
-
-    appId: "1:300493256338:web:dbc4f088feb74c92a3584b",
-
-    measurementId: "G-KBXEDT6Z1L"
-
-  };
-
-    // ▲▲▲ ここまで ▲▲▲
-
-    // 設定が張り付けられている場合のみFirebaseを起動
     if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
       const app = initializeApp(firebaseConfig);
       window.firebaseDb = getDatabase(app);
       window.firebaseRefs = { ref, onValue, push, remove };
-      // コンポーネントにFirebaseの準備が完了したことを通知
       window.dispatchEvent(new CustomEvent('firebase-ready'));
     }
   </script>
@@ -498,7 +489,7 @@
             bgClass: "bg-day2-bg", cardClass: "bg-day2-card", borderClass: "border-day2-border", textClass: "text-day2-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=八徳東寧路口&destination=基山街+九份&waypoints=九份老街%7C阿妹茶楼%7C豎崎路%7C九份景観台",
             spots: [
-              { time: "", name: "八徳東寧路口", desc: "台北市内から九份へ向かうバスの乗車地点。ここから約70分ほどバスに揺られ、徐々に山道を登りながら、ノスタルジックな風景が広がる九份エリアへと向かいます。", mapQuery: "八徳東 ওপরの乗車地点", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "八徳東寧路口", desc: "台北市内から九份へ向かうバスの乗車地点。ここから約70分ほどバスに揺られ、徐々に山道を登りながら、ノスタルジックな風景が広がる九份エリアへと向かいます。", mapQuery: "八徳東寧路口", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
               { transit: "71分" },
               { time: "09:50", name: "九份老街", desc: "かつて金鉱の街として栄えた九份のメインエリア。細く入り組んだ路地に赤提灯が灯り、レトロな商店やカフェが立ち並ぶ、どこか懐かしく幻想的な雰囲気が漂う空間です。", mapQuery: "九份老街", image: "https://jp.hshsharehouse.com/wp-content/uploads/2025/04/20250407173316_0_b31f7f.jpg" },
               { time: "", name: "九份の茶房", desc: "絶景を見下ろしながら本格的な台湾茶を楽しめる名物スポット。代表的な「阿妹茶楼」や「九份茶坊」など、ノスタルジックな建築のテラス席で、ゆっくりとお茶を淹れる贅沢な時間を過ごせます。", mapQuery: "阿妹茶楼", image: "https://imagel.sekainavi.com/images/templates/TAIPEI/1001744/7c2632c3955ba4c9_S.jpg" },
@@ -607,23 +598,31 @@
 
       Alpine.data('currencyConverter', () => ({
         rate: 4.8, 
-        twd: 100,
-        jpy: 480,
+        twd: '',
+        jpy: '',
         async fetchRate() {
           try {
             const res = await fetch('https://api.exchangerate-api.com/v4/latest/TWD');
             const data = await res.json();
             this.rate = data.rates.JPY;
-            this.calcJpy();
+            if(this.twd !== '') this.calcJpy();
           } catch (e) {
             console.log('為替レートの取得に失敗したため、目安のレートを使用します。');
-            this.calcJpy();
+            if(this.twd !== '') this.calcJpy();
           }
         },
         calcJpy() {
+          if (this.twd === '' || this.twd === null) {
+            this.jpy = '';
+            return;
+          }
           this.jpy = Math.floor(this.twd * this.rate);
         },
         calcTwd() {
+          if (this.jpy === '' || this.jpy === null) {
+            this.twd = '';
+            return;
+          }
           this.twd = Math.floor(this.jpy / this.rate);
         }
       }))
@@ -639,10 +638,9 @@
             const memosRef = ref(window.firebaseDb, 'trip_memos');
             
             onValue(memosRef, (snapshot) => {
-              this.isSynced = true; // 接続成功
+              this.isSynced = true;
               const data = snapshot.val();
               if (data) {
-                // データを配列化して最新のものが上に来るように並び替え
                 this.memos = Object.entries(data).map(([key, value]) => ({
                   id: key,
                   ...value
@@ -653,13 +651,10 @@
             });
           };
 
-          // Firebaseの準備ができているかチェック
           if (window.firebaseDb) {
             loadMemos();
           } else {
-            // Firebaseが起動するのを待つ
             window.addEventListener('firebase-ready', loadMemos);
-            // それまではローカルのデータを表示しておく
             this.memos = JSON.parse(localStorage.getItem('trip_memos_backup') || '[]');
           }
         },
@@ -669,7 +664,6 @@
           const dateString = now.toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
           
           if (window.firebaseDb) {
-            // Firebaseに保存 (リアルタイム同期)
             const { ref, push } = window.firebaseRefs;
             const memosRef = ref(window.firebaseDb, 'trip_memos');
             push(memosRef, {
@@ -678,7 +672,6 @@
               timestamp: Date.now()
             });
           } else {
-            // Firebase設定前のバックアップ用動作
             this.memos.unshift({ id: Date.now(), text: this.newMemo, date: dateString, timestamp: Date.now() });
             localStorage.setItem('trip_memos_backup', JSON.stringify(this.memos));
           }
