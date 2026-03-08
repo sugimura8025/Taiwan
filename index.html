@@ -31,6 +31,7 @@
             day5: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' },
             day6: { bg: '#f9fafb', card: '#f3f4f6', border: '#d1d5db', text: '#4b5563' },
             info: { bg: '#f8fafc', card: '#ffffff', border: '#cbd5e1', text: '#334155' },
+            tools: { bg: '#f3f4f6', card: '#ffffff', border: '#9ca3af', text: '#1f2937' },
           }
         }
       }
@@ -88,7 +89,19 @@
             <div class="text-[10px] font-bold mt-0.5 uppercase tracking-wider" x-text="day.area"></div>
           </div>
         </template>
-        <template x-if="!day.isHello">
+        <template x-if="day.isInfo">
+          <div>
+            <i class="ph ph-info text-2xl mb-1"></i>
+            <div class="text-[10px] font-bold mt-0.5 uppercase tracking-wider" x-text="day.area"></div>
+          </div>
+        </template>
+        <template x-if="day.isTools">
+          <div>
+            <i class="ph ph-toolbox text-2xl mb-1"></i>
+            <div class="text-[10px] font-bold mt-0.5 uppercase tracking-wider" x-text="day.area"></div>
+          </div>
+        </template>
+        <template x-if="!day.isHello && !day.isInfo && !day.isTools">
           <div>
             <div class="font-rounded text-lg font-bold leading-tight" x-text="day.date"></div>
             <div class="text-[11px] font-bold mt-0.5" x-text="day.area"></div>
@@ -103,16 +116,21 @@
     <template x-if="itinerary[activeTab].isHello">
       <div class="h-[70vh] flex flex-col items-center justify-center text-center px-4 relative rounded-2xl overflow-hidden shadow-2xl mt-4">
         
-        <div x-data="{ slide: 0 }" x-init="setInterval(() => { slide = slide === 0 ? 1 : 0 }, 4000)" class="absolute inset-0 w-full h-full">
+        <div x-data="{ slide: 0 }" x-init="setInterval(() => { slide = slide === 0 ? 1 : 0 }, 3500)" class="absolute inset-0 w-full h-full">
           <img src="https://www.veltra.com/jp/guide/wp-content/uploads/2023/10/pixta_88320344_M.jpg" 
                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" 
                :class="slide === 0 ? 'opacity-100' : 'opacity-0'">
           <img src="https://www.arukikata.co.jp/wp-content/uploads/20230209132106f3c208001920.jpg" 
                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" 
                :class="slide === 1 ? 'opacity-100' : 'opacity-0'">
+               
+          <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
+            <div class="w-2 h-2 rounded-full transition-colors duration-500" :class="slide === 0 ? 'bg-white' : 'bg-white/30'"></div>
+            <div class="w-2 h-2 rounded-full transition-colors duration-500" :class="slide === 1 ? 'bg-white' : 'bg-white/30'"></div>
+          </div>
         </div>
         
-        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/80"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/80 z-0"></div>
         
         <div class="relative z-10 text-white flex flex-col items-center w-full px-2">
           <p class="text-sm tracking-[0.3em] mb-2 font-light">TAIWAN EXCLUSIVE</p>
@@ -133,7 +151,7 @@
       </div>
     </template>
 
-    <template x-if="!itinerary[activeTab].isInfo && !itinerary[activeTab].isHello">
+    <template x-if="!itinerary[activeTab].isInfo && !itinerary[activeTab].isHello && !itinerary[activeTab].isTools">
       <div>
         <div class="mb-4 flex justify-end" x-show="itinerary[activeTab].routeUrl" x-transition>
           <a :href="itinerary[activeTab].routeUrl" target="_blank" rel="noopener noreferrer"
@@ -183,9 +201,8 @@
     </template>
 
     <template x-if="itinerary[activeTab].isInfo">
-      <div class="space-y-6">
-        
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-2">
+      <div class="space-y-6 mt-2">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
             <i class="ph ph-buildings text-xl text-slate-700"></i>
             <h3 class="font-rounded font-bold text-slate-800">宿泊先 (HOTEL)</h3>
@@ -274,32 +291,97 @@
             </label>
             <label class="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
-              <span class="text-sm font-bold text-slate-700">モバイルバッテリー＆変換プラグ不要（Aタイプ）</span>
+              <span class="text-sm font-bold text-slate-700">モバイルバッテリー</span>
             </label>
             <label class="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
-              <span class="text-sm font-bold text-slate-700">常備薬＆ポケットティッシュ・ウェットティッシュ</span>
+              <span class="text-sm font-bold text-slate-700">常備薬＆ウェットティッシュ</span>
             </label>
           </div>
         </div>
+      </div>
+    </template>
+
+    <template x-if="itinerary[activeTab].isTools">
+      <div class="space-y-6 mt-2">
+        
+        <div class="grid grid-cols-2 gap-3">
+          <a href="https://tenki.jp/world/5/88/58968/" target="_blank" rel="noopener noreferrer" 
+             class="bg-white border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center gap-2 shadow-sm hover:shadow-md transition-shadow active:scale-95 text-center">
+            <i class="ph ph-sun-horizon text-3xl text-orange-500"></i>
+            <span class="text-xs font-bold text-slate-700">台北の天気予報<br>(tenki.jp)</span>
+          </a>
+          <a href="https://m.metro.taipei/jp/routemap.asp" target="_blank" rel="noopener noreferrer" 
+             class="bg-white border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center gap-2 shadow-sm hover:shadow-md transition-shadow active:scale-95 text-center">
+            <i class="ph ph-train text-3xl text-blue-500"></i>
+            <span class="text-xs font-bold text-slate-700">MRT路線図<br>(公式・高画質)</span>
+          </a>
+        </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
-            <i class="ph ph-warning-circle text-xl text-slate-700"></i>
-            <h3 class="font-rounded font-bold text-slate-800">緊急時・お役立ちメモ</h3>
+          <div class="bg-slate-100 px-4 py-2 border-b border-slate-200">
+            <h3 class="font-rounded font-bold text-slate-800 text-sm"><i class="ph ph-map-trifold mr-1"></i>サッと見る路線図</h3>
           </div>
-          <div class="p-5 text-sm space-y-3">
-            <p><span class="font-bold text-red-500">警察:</span> 110</p>
-            <p><span class="font-bold text-red-500">救急・消防:</span> 119</p>
-            <p><span class="font-bold text-slate-700">交流協会(大使館的役割):</span> 02-2713-8000</p>
-            <div class="bg-slate-50 border border-slate-200 rounded p-3 mt-4 text-xs text-slate-600">
-              <strong>💡 台湾の基本ルール</strong><br>
-              ・MRT(地下鉄)内は飲食絶対禁止（ガムや水もNG、罰金あり）。<br>
-              ・チップの習慣は基本的にありません。<br>
-              ・お店や電車内は冷房が強めなので、サッと羽織れる上着があると便利です。
+          <div class="p-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Taipei_Metro_Route_Map_%282023%29.svg/1200px-Taipei_Metro_Route_Map_%282023%29.svg.png" 
+                 class="w-full rounded border border-slate-100" alt="MRT路線図">
+            <p class="text-[10px] text-gray-400 text-center mt-1">※文字が潰れる場合は上の「公式」からPDFでご確認ください。</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" x-data="currencyConverter()" x-init="fetchRate()">
+          <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h3 class="font-rounded font-bold text-slate-800"><i class="ph ph-currency-circle-dollar mr-1"></i>通貨換算 (台湾ドル⇄円)</h3>
+            <span class="text-[10px] text-gray-500" x-text="'1 TWD = ' + rate.toFixed(2) + ' JPY'"></span>
+          </div>
+          <div class="p-5 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-lg text-slate-700 w-12 text-right">NT$</span>
+              <input type="number" x-model="twd" @input="calcJpy()" class="flex-1 bg-slate-50 border border-slate-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-right font-bold" placeholder="台湾ドル">
+            </div>
+            <div class="flex justify-center text-slate-400">
+              <i class="ph ph-arrows-down-up text-xl"></i>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-lg text-slate-700 w-12 text-right">¥</span>
+              <input type="number" x-model="jpy" @input="calcTwd()" class="flex-1 bg-slate-50 border border-slate-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-right font-bold" placeholder="日本円">
+            </div>
+            <p class="text-[10px] text-gray-400 text-center">※最新のリアルタイム為替レートを自動取得して計算します。通信できない場合は目安のレート(1TWD=4.8円)を使用します。</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" x-data="memoBoard()">
+          <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center gap-2">
+            <i class="ph ph-note-pencil text-xl text-slate-700"></i>
+            <h3 class="font-rounded font-bold text-slate-800">旅の掲示板・メモ</h3>
+          </div>
+          <div class="p-4 bg-slate-50">
+            <div class="flex gap-2 mb-4">
+              <textarea x-model="newMemo" rows="2" class="flex-1 bg-white border border-slate-300 text-sm rounded-lg p-2.5 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="買いたいお土産や、気になったお店をメモしよう！"></textarea>
+              <button @click="addMemo()" class="bg-slate-800 text-white font-bold px-4 rounded-lg shadow-sm hover:bg-slate-700 active:scale-95 transition-all text-sm">
+                投稿
+              </button>
+            </div>
+            
+            <div class="space-y-3">
+              <template x-for="memo in memos" :key="memo.id">
+                <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg shadow-sm relative">
+                  <p class="text-sm text-gray-800 whitespace-pre-wrap" x-text="memo.text"></p>
+                  <div class="mt-2 flex justify-between items-end">
+                    <span class="text-[10px] text-yellow-600/70 font-bold" x-text="memo.date"></span>
+                    <button @click="deleteMemo(memo.id)" class="text-gray-400 hover:text-red-500 transition-colors">
+                      <i class="ph ph-trash text-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              </template>
+              <div x-show="memos.length === 0" class="text-center text-gray-400 text-xs py-4">
+                まだメモはありません。
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     </template>
 
@@ -326,7 +408,7 @@
         <p class="text-sm text-gray-600 mb-6 leading-relaxed" x-text="currentSpot.desc"></p>
         
         <div class="flex items-center gap-2 mb-3">
-          <i class="ph ph-map-pin-line text-lg" :class="itinerary[activeTab].textClass"></i>
+          <i class="ph ph-map-pin-line text-lg" :class="itinerary[activeTab].textClass || 'text-gray-600'"></i>
           <h3 class="font-bold text-gray-800">Google Map</h3>
         </div>
         
@@ -341,6 +423,7 @@
 
   <script>
     document.addEventListener('alpine:init', () => {
+      // 旅のスケジュールデータ
       Alpine.data('tripApp', () => ({
         activeTab: 0,
         isModalOpen: false,
@@ -427,11 +510,15 @@
           {
             date: "Info", area: "基本情報", isInfo: true,
             bgClass: "bg-info-bg", cardClass: "bg-info-card", borderClass: "border-info-border", textClass: "text-info-text",
+          },
+          {
+            date: "Tools", area: "ツール・メモ", isTools: true,
+            bgClass: "bg-tools-bg", cardClass: "bg-tools-card", borderClass: "border-tools-border", textClass: "text-tools-text",
           }
         ],
         async init() {
           for (let i = 0; i < this.itinerary.length; i++) {
-            if (this.itinerary[i].isInfo || this.itinerary[i].isHello) continue;
+            if (this.itinerary[i].isInfo || this.itinerary[i].isHello || this.itinerary[i].isTools) continue;
             for (let j = 0; j < this.itinerary[i].spots.length; j++) {
               let spot = this.itinerary[i].spots[j];
               if (!spot.transit && spot.wikiQuery) {
@@ -467,6 +554,58 @@
         closeModal() {
           this.isModalOpen = false;
           document.body.style.overflow = '';
+        }
+      }))
+
+      // 通貨換算用のデータ
+      Alpine.data('currencyConverter', () => ({
+        rate: 4.8, // オフライン時などの基本レート (1TWD = 4.8円)
+        twd: 100,
+        jpy: 480,
+        async fetchRate() {
+          try {
+            // 為替レートのAPIから最新データを取得
+            const res = await fetch('https://api.exchangerate-api.com/v4/latest/TWD');
+            const data = await res.json();
+            this.rate = data.rates.JPY;
+            this.calcJpy();
+          } catch (e) {
+            console.log('為替レートの取得に失敗したため、目安のレートを使用します。');
+            this.calcJpy();
+          }
+        },
+        calcJpy() {
+          this.jpy = Math.floor(this.twd * this.rate);
+        },
+        calcTwd() {
+          this.twd = Math.floor(this.jpy / this.rate);
+        }
+      }))
+
+      // 掲示板（メモ）用のデータ
+      Alpine.data('memoBoard', () => ({
+        memos: JSON.parse(localStorage.getItem('trip_memos') || '[]'),
+        newMemo: '',
+        addMemo() {
+          if (this.newMemo.trim() === '') return;
+          
+          const now = new Date();
+          const dateString = now.toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          
+          // 新しいメモを先頭に追加
+          this.memos.unshift({
+            id: Date.now(),
+            text: this.newMemo,
+            date: dateString
+          });
+          
+          // ブラウザに保存
+          localStorage.setItem('trip_memos', JSON.stringify(this.memos));
+          this.newMemo = '';
+        },
+        deleteMemo(id) {
+          this.memos = this.memos.filter(m => m.id !== id);
+          localStorage.setItem('trip_memos', JSON.stringify(this.memos));
         }
       }))
     })
