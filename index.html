@@ -323,9 +323,9 @@
             <h3 class="font-rounded font-bold text-slate-800 text-sm"><i class="ph ph-map-trifold mr-1"></i>サッと見る路線図</h3>
           </div>
           <div class="p-2">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Taipei_Metro_Route_Map_%282023%29.svg/1200px-Taipei_Metro_Route_Map_%282023%29.svg.png" 
+            <img src="https://s.skygate.co.jp/pc/tour/taiwan/images/map_subway.jpg?20230215" 
                  class="w-full rounded border border-slate-100" alt="MRT路線図">
-            <p class="text-[10px] text-gray-400 text-center mt-1">※文字が潰れる場合は上の「公式」からPDFでご確認ください。</p>
+            <p class="text-[10px] text-gray-400 text-center mt-1">※見づらい場合は上の「公式」から高画質版をご確認ください。</p>
           </div>
         </div>
 
@@ -351,13 +351,19 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" x-data="memoBoard()">
-          <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center gap-2">
-            <i class="ph ph-note-pencil text-xl text-slate-700"></i>
-            <h3 class="font-rounded font-bold text-slate-800">旅の掲示板・メモ</h3>
+          <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+            <h3 class="font-rounded font-bold text-slate-800 flex items-center gap-2">
+              <i class="ph ph-note-pencil text-xl text-slate-700"></i>旅の掲示板 (同期メモ)
+            </h3>
+            <span class="flex h-2 w-2 relative">
+              <span x-show="isSynced" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span x-show="isSynced" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span x-show="!isSynced" class="relative inline-flex rounded-full h-2 w-2 bg-gray-300"></span>
+            </span>
           </div>
           <div class="p-4 bg-slate-50">
             <div class="flex gap-2 mb-4">
-              <textarea x-model="newMemo" rows="2" class="flex-1 bg-white border border-slate-300 text-sm rounded-lg p-2.5 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="買いたいお土産や、気になったお店をメモしよう！"></textarea>
+              <textarea x-model="newMemo" rows="2" class="flex-1 bg-white border border-slate-300 text-sm rounded-lg p-2.5 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="2人で共有したいメモを書き込もう！"></textarea>
               <button @click="addMemo()" class="bg-slate-800 text-white font-bold px-4 rounded-lg shadow-sm hover:bg-slate-700 active:scale-95 transition-all text-sm">
                 投稿
               </button>
@@ -376,7 +382,7 @@
                 </div>
               </template>
               <div x-show="memos.length === 0" class="text-center text-gray-400 text-xs py-4">
-                まだメモはありません。
+                <span x-text="isSynced ? 'まだメモはありません。' : 'Firebaseの初期設定をすると同期メモが使えます！'"></span>
               </div>
             </div>
           </div>
@@ -421,9 +427,44 @@
     </div>
   </div>
 
+
+  <script>
+    // Firebaseの準備ができるまで待機する仕組み
+    window.firebaseDb = null;
+  </script>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+    // ▼▼▼ Firebaseで取得した情報をここに貼り付けます ▼▼▼
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      
+      // ⚠️ 注意：設定コード内に databaseURL が表示されていなかった場合は、
+      // 以下のフォーマットで手動で追記してください。無いとエラーになります。
+      // databaseURL: "https://あなたのプロジェクトID-default-rtdb.firebaseio.com",
+      
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    // ▲▲▲ ここまで ▲▲▲
+
+    // 設定が張り付けられている場合のみFirebaseを起動
+    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+      const app = initializeApp(firebaseConfig);
+      window.firebaseDb = getDatabase(app);
+      window.firebaseRefs = { ref, onValue, push, remove };
+      // コンポーネントにFirebaseの準備が完了したことを通知
+      window.dispatchEvent(new CustomEvent('firebase-ready'));
+    }
+  </script>
+
   <script>
     document.addEventListener('alpine:init', () => {
-      // 旅のスケジュールデータ
       Alpine.data('tripApp', () => ({
         activeTab: 0,
         isModalOpen: false,
@@ -450,7 +491,7 @@
             bgClass: "bg-day2-bg", cardClass: "bg-day2-card", borderClass: "border-day2-border", textClass: "text-day2-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=八徳東寧路口&destination=基山街+九份&waypoints=九份老街%7C阿妹茶楼%7C豎崎路%7C九份景観台",
             spots: [
-              { time: "", name: "八徳東寧路口", desc: "台北市内から九份へ向かうバスの乗車地点。ここから約70分ほどバスに揺られ、徐々に山道を登りながら、ノスタルジックな風景が広がる九份エリアへと向かいます。", mapQuery: "八徳東寧路口", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "八徳東寧路口", desc: "台北市内から九份へ向かうバスの乗車地点。ここから約70分ほどバスに揺られ、徐々に山道を登りながら、ノスタルジックな風景が広がる九份エリアへと向かいます。", mapQuery: "八徳東 ওপরの乗車地点", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
               { transit: "71分" },
               { time: "09:50", name: "九份老街", desc: "かつて金鉱の街として栄えた九份のメインエリア。細く入り組んだ路地に赤提灯が灯り、レトロな商店やカフェが立ち並ぶ、どこか懐かしく幻想的な雰囲気が漂う空間です。", mapQuery: "九份老街", image: "https://jp.hshsharehouse.com/wp-content/uploads/2025/04/20250407173316_0_b31f7f.jpg" },
               { time: "", name: "九份の茶房", desc: "絶景を見下ろしながら本格的な台湾茶を楽しめる名物スポット。代表的な「阿妹茶楼」や「九份茶坊」など、ノスタルジックな建築のテラス席で、ゆっくりとお茶を淹れる贅沢な時間を過ごせます。", mapQuery: "阿妹茶楼", image: "https://imagel.sekainavi.com/images/templates/TAIPEI/1001744/7c2632c3955ba4c9_S.jpg" },
@@ -557,14 +598,12 @@
         }
       }))
 
-      // 通貨換算用のデータ
       Alpine.data('currencyConverter', () => ({
-        rate: 4.8, // オフライン時などの基本レート (1TWD = 4.8円)
+        rate: 4.8, 
         twd: 100,
         jpy: 480,
         async fetchRate() {
           try {
-            // 為替レートのAPIから最新データを取得
             const res = await fetch('https://api.exchangerate-api.com/v4/latest/TWD');
             const data = await res.json();
             this.rate = data.rates.JPY;
@@ -582,30 +621,71 @@
         }
       }))
 
-      // 掲示板（メモ）用のデータ
       Alpine.data('memoBoard', () => ({
-        memos: JSON.parse(localStorage.getItem('trip_memos') || '[]'),
+        memos: [],
         newMemo: '',
+        isSynced: false,
+        init() {
+          const loadMemos = () => {
+            if (!window.firebaseDb) return;
+            const { ref, onValue } = window.firebaseRefs;
+            const memosRef = ref(window.firebaseDb, 'trip_memos');
+            
+            onValue(memosRef, (snapshot) => {
+              this.isSynced = true; // 接続成功
+              const data = snapshot.val();
+              if (data) {
+                // データを配列化して最新のものが上に来るように並び替え
+                this.memos = Object.entries(data).map(([key, value]) => ({
+                  id: key,
+                  ...value
+                })).sort((a, b) => b.timestamp - a.timestamp);
+              } else {
+                this.memos = [];
+              }
+            });
+          };
+
+          // Firebaseの準備ができているかチェック
+          if (window.firebaseDb) {
+            loadMemos();
+          } else {
+            // Firebaseが起動するのを待つ
+            window.addEventListener('firebase-ready', loadMemos);
+            // それまではローカルのデータを表示しておく
+            this.memos = JSON.parse(localStorage.getItem('trip_memos_backup') || '[]');
+          }
+        },
         addMemo() {
           if (this.newMemo.trim() === '') return;
-          
           const now = new Date();
           const dateString = now.toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
           
-          // 新しいメモを先頭に追加
-          this.memos.unshift({
-            id: Date.now(),
-            text: this.newMemo,
-            date: dateString
-          });
-          
-          // ブラウザに保存
-          localStorage.setItem('trip_memos', JSON.stringify(this.memos));
+          if (window.firebaseDb) {
+            // Firebaseに保存 (リアルタイム同期)
+            const { ref, push } = window.firebaseRefs;
+            const memosRef = ref(window.firebaseDb, 'trip_memos');
+            push(memosRef, {
+              text: this.newMemo,
+              date: dateString,
+              timestamp: Date.now()
+            });
+          } else {
+            // Firebase設定前のバックアップ用動作
+            this.memos.unshift({ id: Date.now(), text: this.newMemo, date: dateString, timestamp: Date.now() });
+            localStorage.setItem('trip_memos_backup', JSON.stringify(this.memos));
+          }
           this.newMemo = '';
         },
         deleteMemo(id) {
-          this.memos = this.memos.filter(m => m.id !== id);
-          localStorage.setItem('trip_memos', JSON.stringify(this.memos));
+          if (window.firebaseDb) {
+            const { ref, remove } = window.firebaseRefs;
+            const memoRef = ref(window.firebaseDb, `trip_memos/${id}`);
+            remove(memoRef);
+          } else {
+            this.memos = this.memos.filter(m => m.id !== id);
+            localStorage.setItem('trip_memos_backup', JSON.stringify(this.memos));
+          }
         }
       }))
     })
