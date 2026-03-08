@@ -102,17 +102,26 @@
     
     <template x-if="itinerary[activeTab].isHello">
       <div class="h-[70vh] flex flex-col items-center justify-center text-center px-4 relative rounded-2xl overflow-hidden shadow-2xl mt-4">
-        <img src="https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70"></div>
         
-        <div class="relative z-10 text-white flex flex-col items-center">
+        <div x-data="{ slide: 0 }" x-init="setInterval(() => { slide = slide === 0 ? 1 : 0 }, 4000)" class="absolute inset-0 w-full h-full">
+          <img src="https://www.veltra.com/jp/guide/wp-content/uploads/2023/10/pixta_88320344_M.jpg" 
+               class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" 
+               :class="slide === 0 ? 'opacity-100' : 'opacity-0'">
+          <img src="https://www.arukikata.co.jp/wp-content/uploads/20230209132106f3c208001920.jpg" 
+               class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" 
+               :class="slide === 1 ? 'opacity-100' : 'opacity-0'">
+        </div>
+        
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/80"></div>
+        
+        <div class="relative z-10 text-white flex flex-col items-center w-full px-2">
           <p class="text-sm tracking-[0.3em] mb-2 font-light">TAIWAN EXCLUSIVE</p>
           <h2 class="text-5xl font-serif font-bold mb-4 tracking-widest drop-shadow-lg">台湾旅行</h2>
           <div class="h-px w-16 bg-white/50 mb-4"></div>
           <p class="text-lg tracking-widest mb-10 font-rounded">2026.4.2 - 4.7</p>
           
-          <p class="text-sm mb-12 font-light tracking-wide bg-black/20 px-4 py-2 rounded-full backdrop-blur-sm border border-white/10">
-            NAOTO SUGIMURA'S JOURNEY
+          <p class="text-[11px] sm:text-xs mb-12 font-bold tracking-wider bg-black/40 px-5 py-2.5 rounded-full backdrop-blur-md border border-white/20">
+            NAOTO SUGIMURA & TOMOHIRO EGUCHI
           </p>
           
           <button @click="activeTab = 1; window.scrollTo({top: 0, behavior: 'smooth'})" 
@@ -176,7 +185,7 @@
     <template x-if="itinerary[activeTab].isInfo">
       <div class="space-y-6">
         
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-2">
           <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
             <i class="ph ph-buildings text-xl text-slate-700"></i>
             <h3 class="font-rounded font-bold text-slate-800">宿泊先 (HOTEL)</h3>
@@ -205,6 +214,9 @@
             <h3 class="font-rounded font-bold text-slate-800">フライト情報 (FLIGHT)</h3>
           </div>
           <div class="p-5 space-y-4">
+            <p class="text-xs font-bold text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
+              <i class="ph ph-users align-middle mr-1"></i>搭乗者: SUGIMURA NAOTO / EGUCHI TOMOHIRO
+            </p>
             
             <div class="border-l-4 border-blue-400 pl-4 py-1">
               <p class="text-xs font-bold text-blue-500 mb-1">【往路】 4月2日(木) | スクート TR877便</p>
@@ -334,7 +346,6 @@
         isModalOpen: false,
         currentSpot: {},
         itinerary: [
-          // 先頭にHelloタブを追加
           {
             date: "Hello", area: "WELCOME", isHello: true,
             bgClass: "bg-hello-bg", textClass: "text-hello-text", borderClass: "border-transparent"
@@ -413,7 +424,6 @@
               { time: "15:30", name: "台湾桃園国際空港", desc: "楽しかった台湾旅行もいよいよ終わりです。入国時とは違うターミナルの景色を眺めながら、素晴らしい旅の思い出とともに帰国の途に就きます。お気をつけて！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
             ]
           },
-          // 一番右にInfoタブを移動
           {
             date: "Info", area: "基本情報", isInfo: true,
             bgClass: "bg-info-bg", cardClass: "bg-info-card", borderClass: "border-info-border", textClass: "text-info-text",
