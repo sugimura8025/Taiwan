@@ -7,7 +7,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@500;700&display=swap" rel="stylesheet">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -19,16 +19,18 @@
         extend: {
           fontFamily: {
             sans: ['"Noto Sans JP"', 'sans-serif'],
+            serif: ['"Noto Serif JP"', 'serif'],
             rounded: ['"M PLUS Rounded 1c"', 'sans-serif'],
           },
           colors: {
-            info: { bg: '#f8fafc', card: '#ffffff', border: '#cbd5e1', text: '#334155' }, // インフォタブ用
+            hello: { bg: '#111827', text: '#ffffff', border: '#4b5563' },
             day1: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' },
             day2: { bg: '#f0fdf4', card: '#dcfce7', border: '#86efac', text: '#16a34a' },
             day3: { bg: '#fdf2f8', card: '#fce7f3', border: '#f9a8d4', text: '#db2777' },
             day4: { bg: '#f0f9ff', card: '#e0f2fe', border: '#7dd3fc', text: '#0284c7' },
             day5: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' },
             day6: { bg: '#f9fafb', card: '#f3f4f6', border: '#d1d5db', text: '#4b5563' },
+            info: { bg: '#f8fafc', card: '#ffffff', border: '#cbd5e1', text: '#334155' },
           }
         }
       }
@@ -59,7 +61,6 @@
       z-index: 0;
     }
 
-    /* チェックボックスのカスタムスタイル */
     .checklist-input:checked + span {
       text-decoration: line-through;
       color: #9ca3af;
@@ -81,15 +82,49 @@
           activeTab === index ? day.textClass : 'text-gray-400 border-transparent',
           activeTab === index ? day.borderClass : ''
         ]">
-        <div class="font-rounded text-lg font-bold leading-tight" x-text="day.date"></div>
-        <div class="text-[11px] font-bold mt-0.5" x-text="day.area"></div>
+        <template x-if="day.isHello">
+          <div>
+            <i class="ph ph-hand-waving text-2xl mb-1"></i>
+            <div class="text-[10px] font-bold mt-0.5 uppercase tracking-wider" x-text="day.area"></div>
+          </div>
+        </template>
+        <template x-if="!day.isHello">
+          <div>
+            <div class="font-rounded text-lg font-bold leading-tight" x-text="day.date"></div>
+            <div class="text-[11px] font-bold mt-0.5" x-text="day.area"></div>
+          </div>
+        </template>
       </button>
     </template>
   </nav>
 
   <main class="p-4 pb-32 max-w-lg mx-auto min-h-screen transition-colors duration-500" :class="itinerary[activeTab].bgClass">
     
-    <template x-if="!itinerary[activeTab].isInfo">
+    <template x-if="itinerary[activeTab].isHello">
+      <div class="h-[70vh] flex flex-col items-center justify-center text-center px-4 relative rounded-2xl overflow-hidden shadow-2xl mt-4">
+        <img src="https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70"></div>
+        
+        <div class="relative z-10 text-white flex flex-col items-center">
+          <p class="text-sm tracking-[0.3em] mb-2 font-light">TAIWAN EXCLUSIVE</p>
+          <h2 class="text-5xl font-serif font-bold mb-4 tracking-widest drop-shadow-lg">台湾旅行</h2>
+          <div class="h-px w-16 bg-white/50 mb-4"></div>
+          <p class="text-lg tracking-widest mb-10 font-rounded">2026.4.2 - 4.7</p>
+          
+          <p class="text-sm mb-12 font-light tracking-wide bg-black/20 px-4 py-2 rounded-full backdrop-blur-sm border border-white/10">
+            NAOTO SUGIMURA'S JOURNEY
+          </p>
+          
+          <button @click="activeTab = 1; window.scrollTo({top: 0, behavior: 'smooth'})" 
+                  class="flex items-center gap-2 bg-white text-gray-900 font-bold px-8 py-3.5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform">
+            <span>旅程を見る</span>
+            <i class="ph ph-arrow-right text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template x-if="!itinerary[activeTab].isInfo && !itinerary[activeTab].isHello">
       <div>
         <div class="mb-4 flex justify-end" x-show="itinerary[activeTab].routeUrl" x-transition>
           <a :href="itinerary[activeTab].routeUrl" target="_blank" rel="noopener noreferrer"
@@ -152,11 +187,11 @@
             
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 relative">
               <span class="absolute -top-3 left-4 bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-1 rounded">タクシー運転手さんに見せる用</span>
-              <p class="text-xl font-bold text-gray-900 text-center tracking-widest mt-2">敦謙國際大飯店 台北八德館</p>
+              <p class="text-xl font-bold text-gray-900 text-center tracking-widest mt-2">承携行旅 台北八徳館</p>
               <p class="text-sm text-gray-600 text-center mt-1">台北市松山區八德路四段16号</p>
             </div>
 
-            <a href="https://www.google.com/maps/search/?api=1&query=敦謙國際大飯店+台北八德館" target="_blank" rel="noopener noreferrer" 
+            <a href="https://www.google.com/maps/search/?api=1&query=承携行旅+台北八徳館" target="_blank" rel="noopener noreferrer" 
                class="mt-4 flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-sm transition-colors w-full active:scale-95">
               <i class="ph ph-map-pin text-xl"></i>
               <span>Google Mapでホテルを開く</span>
@@ -299,9 +334,10 @@
         isModalOpen: false,
         currentSpot: {},
         itinerary: [
+          // 先頭にHelloタブを追加
           {
-            date: "Info", area: "基本情報", isInfo: true,
-            bgClass: "bg-info-bg", cardClass: "bg-info-card", borderClass: "border-info-border", textClass: "text-info-text",
+            date: "Hello", area: "WELCOME", isHello: true,
+            bgClass: "bg-hello-bg", textClass: "text-hello-text", borderClass: "border-transparent"
           },
           {
             date: "4/2(木)", area: "台北", 
@@ -376,11 +412,16 @@
               { transit: "40分" },
               { time: "15:30", name: "台湾桃園国際空港", desc: "楽しかった台湾旅行もいよいよ終わりです。入国時とは違うターミナルの景色を眺めながら、素晴らしい旅の思い出とともに帰国の途に就きます。お気をつけて！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
             ]
+          },
+          // 一番右にInfoタブを移動
+          {
+            date: "Info", area: "基本情報", isInfo: true,
+            bgClass: "bg-info-bg", cardClass: "bg-info-card", borderClass: "border-info-border", textClass: "text-info-text",
           }
         ],
         async init() {
           for (let i = 0; i < this.itinerary.length; i++) {
-            if (this.itinerary[i].isInfo) continue;
+            if (this.itinerary[i].isInfo || this.itinerary[i].isHello) continue;
             for (let j = 0; j < this.itinerary[i].spots.length; j++) {
               let spot = this.itinerary[i].spots[j];
               if (!spot.transit && spot.wikiQuery) {
