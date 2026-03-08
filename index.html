@@ -22,12 +22,12 @@
             rounded: ['"M PLUS Rounded 1c"', 'sans-serif'],
           },
           colors: {
-            day1: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' }, // オレンジ (台北)
-            day2: { bg: '#f0fdf4', card: '#dcfce7', border: '#86efac', text: '#16a34a' }, // グリーン (九份)
-            day3: { bg: '#fdf2f8', card: '#fce7f3', border: '#f9a8d4', text: '#db2777' }, // ピンク (台北)
-            day4: { bg: '#f0f9ff', card: '#e0f2fe', border: '#7dd3fc', text: '#0284c7' }, // ブルー (淡水)
-            day5: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' }, // オレンジ (台北)
-            day6: { bg: '#f9fafb', card: '#f3f4f6', border: '#d1d5db', text: '#4b5563' }, // グレー (桃園)
+            day1: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' },
+            day2: { bg: '#f0fdf4', card: '#dcfce7', border: '#86efac', text: '#16a34a' },
+            day3: { bg: '#fdf2f8', card: '#fce7f3', border: '#f9a8d4', text: '#db2777' },
+            day4: { bg: '#f0f9ff', card: '#e0f2fe', border: '#7dd3fc', text: '#0284c7' },
+            day5: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' },
+            day6: { bg: '#f9fafb', card: '#f3f4f6', border: '#d1d5db', text: '#4b5563' },
           }
         }
       }
@@ -113,7 +113,7 @@
 
             <div @click="openModal(spot)" class="rounded-xl p-4 shadow-sm border cursor-pointer active:scale-95 transition-transform" :class="[itinerary[activeTab].cardClass, itinerary[activeTab].borderClass]">
               <h3 class="font-rounded text-lg font-bold mb-1" :class="itinerary[activeTab].textClass" x-text="spot.name"></h3>
-              <p class="text-xs text-gray-600 line-clamp-2" x-text="spot.desc"></p>
+              <p class="text-xs text-gray-600 line-clamp-3" x-text="spot.desc"></p>
               
               <div class="mt-3 h-28 rounded-lg overflow-hidden relative bg-gray-200">
                 <img :src="spot.image" class="w-full h-full object-cover opacity-90 transition-opacity duration-300" alt="">
@@ -174,13 +174,11 @@
             bgClass: "bg-day1-bg", cardClass: "bg-day1-card", borderClass: "border-day1-border", textClass: "text-day1-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=台湾桃園国際空港&destination=象山+台北&waypoints=松山慈祐宮%7C饒河街観光夜市",
             spots: [
-              { time: "15:10", name: "台湾桃園国際空港", desc: "Arrival. いよいよ台湾旅行のスタートです！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
+              { time: "15:10", name: "台湾桃園国際空港", desc: "台湾の玄関口、桃園国際空港に到着。入国審査や両替を済ませ、MRT（桃園空港線）などを利用して台北市内へ向かいます。ワクワクする旅の始まりです！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
               { transit: "40分" },
-              // wikiQueryを削除し、指定のURLを設定
-              { time: "", name: "松山慈祐宮", desc: "夜市のすぐ隣にある、装飾が美しい道教の寺院。", mapQuery: "松山慈祐宮", image: "https://www.travel.taipei/content/images/attractions/179307/1024x768_attractions-image-cy0ivxbzg0uxjzyc3wdxng.jpg" },
-              { time: "", name: "饒河街観光夜市", desc: "活気あふれる夜市で、名物の胡椒餅などを食べ歩き。", mapQuery: "饒河街観光夜市", wikiQuery: "饒河街観光夜市", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" },
-              // wikiQueryを削除し、指定のURLを設定
-              { time: "21:00", name: "象山", desc: "少し階段を登り、台北101の輝く夜景を一望！", mapQuery: "象山 台北", image: "https://www.veltra.com/jp/guide/wp-content/uploads/2023/10/pixta_76216113_M.jpg" }
+              { time: "", name: "松山慈祐宮", desc: "1753年に創建された、松山地区の信仰の中心となる道教寺院。精巧で色鮮やかな彫刻が施された6階建ての荘厳な建築は圧巻で、夜はライトアップされて一層神秘的になります。", mapQuery: "松山慈祐宮", image: "https://www.travel.taipei/content/images/attractions/179307/1024x768_attractions-image-cy0ivxbzg0uxjzyc3wdxng.jpg" },
+              { time: "", name: "饒河街観光夜市", desc: "松山慈祐宮のすぐ隣に広がる、台北で最も歴史ある夜市の一つ。ミシュラン必比登（ビブグルマン）にも選ばれた名物「福州世祖胡椒餅」をはじめ、活気あふれる屋台グルメが目白押しです。", mapQuery: "饒河街観光夜市", wikiQuery: "饒河街観光夜市", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" },
+              { time: "21:00", name: "象山", desc: "台北101を中心とした大パノラマを一望できる絶好のビュースポット。整備された階段を20〜30分ほど登る必要がありますが、頂上から見る息を呑むような美しい夜景は、その疲れを吹き飛ばしてくれます。", mapQuery: "象山 台北", image: "https://www.veltra.com/jp/guide/wp-content/uploads/2023/10/pixta_76216113_M.jpg" }
             ]
           },
           {
@@ -188,14 +186,13 @@
             bgClass: "bg-day2-bg", cardClass: "bg-day2-card", borderClass: "border-day2-border", textClass: "text-day2-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=八徳東寧路口&destination=基山街+九份&waypoints=九份老街%7C阿妹茶楼%7C豎崎路%7C九份景観台",
             spots: [
-              { time: "", name: "八徳東寧路口", desc: "ここからバスに乗車して九份へ向かいます。", mapQuery: "八徳東寧路口", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "八徳東寧路口", desc: "台北市内から九份へ向かうバスの乗車地点。ここから約70分ほどバスに揺られ、徐々に山道を登りながら、ノスタルジックな風景が広がる九份エリアへと向かいます。", mapQuery: "八徳東寧路口", wikiQuery: "台北市", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
               { transit: "71分" },
-              // wikiQueryを削除し、指定のURLを設定
-              { time: "09:50", name: "九份老街", desc: "赤提灯が並ぶレトロでノスタルジックな街並みを散策。", mapQuery: "九份老街", image: "https://jp.hshsharehouse.com/wp-content/uploads/2025/04/20250407173316_0_b31f7f.jpg" },
-              { time: "", name: "九份の茶房", desc: "九戸茶語、九份茶坊、阿妹茶楼などで景色を見ながら一休み。", mapQuery: "阿妹茶楼", image: "https://imagel.sekainavi.com/images/templates/TAIPEI/1001744/7c2632c3955ba4c9_S.jpg" },
-              { time: "", name: "賢崎路", desc: "九份といえばここ！という有名な石段の小道。", mapQuery: "豎崎路", image: "https://i0.wp.com/lade.jp/wp-content/uploads/2015/03/IMG_0053.jpg?w=800&ssl=1" },
-              { time: "", name: "九份景観台", desc: "海と山を見渡せる絶景スポット。", mapQuery: "九份景観台", image: "https://blog-static.kkday.com/ja/blog/wp-content/uploads/pixta_114460767_M.jpg" },
-              { time: "", name: "基山街", desc: "お土産屋や食べ歩きグルメがひしめく賑やかな通り。", mapQuery: "基山街 九份", image: "https://cdn.4travel.jp/img/thumbnails/imk/tips_pict/19/77/68/650x450_19776873.jpg?updated_at=1725031723" }
+              { time: "09:50", name: "九份老街", desc: "かつて金鉱の街として栄えた九份のメインエリア。細く入り組んだ路地に赤提灯が灯り、レトロな商店やカフェが立ち並ぶ、どこか懐かしく幻想的な雰囲気が漂う空間です。", mapQuery: "九份老街", image: "https://jp.hshsharehouse.com/wp-content/uploads/2025/04/20250407173316_0_b31f7f.jpg" },
+              { time: "", name: "九份の茶房", desc: "絶景を見下ろしながら本格的な台湾茶を楽しめる名物スポット。代表的な「阿妹茶楼」や「九份茶坊」など、ノスタルジックな建築のテラス席で、ゆっくりとお茶を淹れる贅沢な時間を過ごせます。", mapQuery: "阿妹茶楼", image: "https://imagel.sekainavi.com/images/templates/TAIPEI/1001744/7c2632c3955ba4c9_S.jpg" },
+              { time: "", name: "賢崎路", desc: "九份のシンボルとも言える、急勾配の長い石段が続く小道。両脇には赤提灯が連なり、まるで映画のセットに迷い込んだような、九份で最もフォトジェニックな景観が広がっています。", mapQuery: "豎崎路", image: "https://i0.wp.com/lade.jp/wp-content/uploads/2015/03/IMG_0053.jpg?w=800&ssl=1" },
+              { time: "", name: "九份景観台", desc: "九份の山肌から、基隆湾の美しい海と周囲の山々をパノラマで見渡せる展望スポット。天気が良ければ、青い海と空、そして夕暮れ時にはドラマチックな夕景を楽しむことができます。", mapQuery: "九份景観台", image: "https://blog-static.kkday.com/ja/blog/wp-content/uploads/pixta_114460767_M.jpg" },
+              { time: "", name: "基山街", desc: "九份の入り口から続く、最も賑やかなアーケード商店街。名物のタロイモ団子「芋圓」や、草餅などのローカルスイーツ、ユニークなお土産屋さんがひしめき合い、食べ歩きに最適です。", mapQuery: "基山街 九份", image: "https://cdn.4travel.jp/img/thumbnails/imk/tips_pict/19/77/68/650x450_19776873.jpg?updated_at=1725031723" }
             ]
           },
           {
@@ -203,9 +200,9 @@
             bgClass: "bg-day3-bg", cardClass: "bg-day3-card", borderClass: "border-day3-border", textClass: "text-day3-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=国立故宮博物院&destination=士林夜市&waypoints=国民革命忠烈祠",
             spots: [
-              { time: "", name: "国立故宮博物院", desc: "歴代中国の至宝が集まる世界屈指の博物館。", mapQuery: "国立故宮博物院", wikiQuery: "国立故宮博物院", image: "https://images.unsplash.com/photo-1590494056345-d85c54ce2813?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "忠烈祠", desc: "衛兵交代式は一見の価値あり！", mapQuery: "国民革命忠烈祠", wikiQuery: "国民革命忠烈祠", image: "https://images.unsplash.com/photo-1588661794770-0081d092eac4?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "士林夜市", desc: "台北最大規模の夜市で、台湾グルメを遊び尽くす。", mapQuery: "士林夜市", wikiQuery: "士林夜市", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" }
+              { time: "", name: "国立故宮博物院", desc: "約70万点にも及ぶ歴代中国皇帝の至宝を収蔵する、世界四大博物館の一つ。有名な「翠玉白菜」や「肉形石」など、精巧で歴史的価値の高い美術工芸品をじっくりと堪能できます。", mapQuery: "国立故宮博物院", wikiQuery: "国立故宮博物院", image: "https://images.unsplash.com/photo-1590494056345-d85c54ce2813?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "忠烈祠", desc: "辛亥革命などで命を落とした約33万人の英霊を祀る広大な祠。大門と大殿を守る衛兵たちの、一糸乱れぬ動きと銃剣を扱う見事な「衛兵交代式」は、厳かで必見の儀式です。", mapQuery: "国民革命忠烈祠", wikiQuery: "国民革命忠烈祠", image: "https://images.unsplash.com/photo-1588661794770-0081d092eac4?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "士林夜市", desc: "台北で最大規模と知名度を誇る巨大なナイトマーケット。顔より大きいフライドチキン「大鶏排」やB級グルメから、ファッション雑貨、ゲーム屋台まで、台湾の夜の熱気を存分に味わえます。", mapQuery: "士林夜市", wikiQuery: "士林夜市", image: "https://images.unsplash.com/photo-1574519616010-0082ea97fb37?auto=format&fit=crop&w=600&q=80" }
             ]
           },
           {
@@ -213,15 +210,13 @@
             bgClass: "bg-day4-bg", cardClass: "bg-day4-card", borderClass: "border-day4-border", textClass: "text-day4-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=MRT淡水駅&destination=雲門劇場&waypoints=淡水老街%7C淡水礼拝堂%7C正宗阿給老店",
             spots: [
-              { time: "10:00", name: "淡水駅", desc: "台北からMRTで到着。台湾のベニスへ。", mapQuery: "MRT淡水駅", wikiQuery: "淡水駅", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
+              { time: "10:00", name: "淡水駅", desc: "台北市内からMRT淡水信義線に乗って約40分で到着する、水辺の美しい街・淡水への玄関口。駅を出るとすぐに淡水河の開放的な風景が広がり、リゾート気分が高まります。", mapQuery: "MRT淡水駅", wikiQuery: "淡水駅", image: "https://images.unsplash.com/photo-1520638067885-f20ee4baf5dc?auto=format&fit=crop&w=600&q=80" },
               { transit: "40分" },
-              // wikiQueryを削除し、指定のURLを設定
-              { time: "", name: "淡水老街", desc: "川沿いの遊歩道を散歩しながら食べ歩き。", mapQuery: "淡水老街", image: "https://www.travel.taipei/content/images/attractions/430669/1024x768_attractions-image-ipkhsqnbgkkyoehrzgvnyg.jpg" },
-              { time: "", name: "淡水礼拝堂", desc: "赤レンガ造りの美しい教会。", mapQuery: "淡水礼拝堂", wikiQuery: "淡水礼拝堂", image: "https://images.unsplash.com/photo-1557088496-07a2c070f612?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "正宗阿給老店", desc: "淡水名物「阿給（アゲ）」の発祥の地。", mapQuery: "正宗阿給老店", wikiQuery: "淡水区", image: "https://images.unsplash.com/photo-1596701880572-132d0ce59bb7?auto=format&fit=crop&w=600&q=80" },
-              // 追加: 紅毛城
-              { time: "", name: "紅毛城", desc: "スペイン人によって建てられた、淡水を代表する歴史ある要塞建築。", mapQuery: "紅毛城", wikiQuery: "紅毛城", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "雲門劇場", desc: "緑に囲まれた美しい現代建築の劇場。", mapQuery: "雲門劇場", wikiQuery: "雲門舞集", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
+              { time: "", name: "淡水老街", desc: "淡水河沿いに続く、心地よい川風を感じられる遊歩道と商店街。海鮮の揚げ物や名物の鉄蛋（黒く煮込まれた硬い卵）、巨大なソフトクリームなどを食べ歩きしながら散策を楽しめます。", mapQuery: "淡水老街", image: "https://www.travel.taipei/content/images/attractions/430669/1024x768_attractions-image-ipkhsqnbgkkyoehrzgvnyg.jpg" },
+              { time: "", name: "淡水礼拝堂", desc: "1933年に建てられた、ゴシック様式の美しい赤レンガ造りの長老派教会。ステンドグラスや高くそびえる鐘楼が異国情緒を漂わせ、淡水の歴史的な風景のアクセントになっています。", mapQuery: "淡水礼拝堂", image: "https://cdn.4travel.jp/img/thumbnails/imk/tips_pict/19/98/79/650x450_19987988.jpg?updated_at=1763256705" },
+              { time: "", name: "正宗阿給老店", desc: "油揚げの中に春雨を詰め、魚のすり身で塞いで特製甘辛ソースをかけた淡水発祥のローカルフード「阿給（アゲ）」の超人気老舗店。地元の人々にも愛される素朴な味わいです。", mapQuery: "正宗阿給老店", image: "https://tblg.k-img.com/restaurant/images/Rvw/65323/150x150_square_65323254.jpg" },
+              { time: "", name: "紅毛城", desc: "17世紀にスペイン人によって建造され、その後オランダ人やイギリス人に引き継がれた台湾最古級の要塞建築。美しい赤レンガの洋館と、高台から見下ろす淡水河の景色が魅力です。", mapQuery: "紅毛城", image: "https://res.klook.com/image/upload/w_500,h_313,c_fill,q_85/activities/axzmqc4ghnaazprkl67h.jpg" },
+              { time: "", name: "雲門劇場", desc: "国際的に活躍する台湾のコンテンポラリーダンス舞踊団「雲門舞集」の拠点。緑豊かな自然と見事に調和した、銅葺き屋根とガラス張りの現代建築は芸術的な美しさです。", mapQuery: "雲門劇場", image: "https://architecture-tour.com/image/world-taiwan-cloud-gate-theater_image1.jpg" }
             ]
           },
           {
@@ -229,13 +224,13 @@
             bgClass: "bg-day5-bg", cardClass: "bg-day5-card", borderClass: "border-day5-border", textClass: "text-day5-text",
             routeUrl: "https://www.google.com/maps/dir/?api=1&origin=台北101&destination=迪化街&waypoints=国立中正紀念堂%7C中華民国総統府%7C剝皮寮歷史街区%7C艋舺龍山寺%7C西門紅楼",
             spots: [
-              { time: "", name: "台北101", desc: "台湾のシンボル！展望台やショッピングを満喫。", mapQuery: "台北101", wikiQuery: "台北101", image: "https://images.unsplash.com/photo-1583335513577-224b12745305?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "国立中正紀念堂", desc: "壮大なスケールの真っ白な記念堂。", mapQuery: "国立中正紀念堂", wikiQuery: "中正紀念堂", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "中華民国総統府", desc: "レンガ造りが美しいルネサンス様式の建築。", mapQuery: "中華民国総統府", wikiQuery: "中華民国総統府", image: "https://images.unsplash.com/photo-1557088496-07a2c070f612?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "剝皮寮歷史街区", desc: "古い街並みが保存されたレトロな写真スポット。", mapQuery: "剝皮寮歷史街区", wikiQuery: "剝皮寮", image: "https://images.unsplash.com/photo-1588661794770-0081d092eac4?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "龍山寺", desc: "台北随一のパワースポットでお参り。", mapQuery: "龍山寺", wikiQuery: "艋舺龍山寺", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "西門町 (西門紅楼/16工房)", desc: "台湾の原宿。赤レンガの紅楼やクリエイターのお店巡り。", mapQuery: "西門紅楼", wikiQuery: "西門町", image: "https://images.unsplash.com/photo-1583335513577-224b12745305?auto=format&fit=crop&w=600&q=80" },
-              { time: "", name: "迪化街", desc: "歴史的な問屋街。お土産のからすみやドライフルーツを買うならここ。", mapQuery: "迪化街", wikiQuery: "迪化街", image: "https://images.unsplash.com/photo-1577908993883-7c30a476dbb3?auto=format&fit=crop&w=600&q=80" }
+              { time: "", name: "台北101", desc: "高さ508メートル、かつて世界一の高さを誇った台湾のランドマークタワー。竹をモチーフにした縁起の良いデザインの超高層ビルで、展望台からは台北の街並みを360度見渡せます。", mapQuery: "台北101", image: "https://www.veltra.com/jp/guide/wp-content/uploads/2023/11/pixta_84090214_M.jpg" },
+              { time: "", name: "国立中正紀念堂", desc: "初代総統・蒋介石を顕彰して建てられた、白亜の壁と青い八角形の瓦屋根が美しい壮大な記念堂。広大な広場や美しい庭園が併設されており、ここでも1時間ごとの衛兵交代式が見学できます。", mapQuery: "国立中正紀念堂", wikiQuery: "中正紀念堂", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "中華民国総統府", desc: "1919年の日本統治時代に建設された、赤レンガと白い石のコントラストが美しいルネサンス様式の歴史的建築。現在も台湾の政治の中枢として機能しており、外観だけでも見応えがあります。", mapQuery: "中華民国総統府", image: "https://taiwan-shugakuryoko.jp/wp/wp-content/uploads/2020/10/24c4d88643d95ce6a416919ab49c74e2.jpg" },
+              { time: "", name: "剝皮寮歷史街区", desc: "清朝時代から日本統治時代にかけての、アーケード状の古い赤レンガの街並みが修復・保存されている歴史エリア。ノスタルジックな雰囲気が漂い、フォトジェニックなスポットとして人気です。", mapQuery: "剝皮寮歷史街区", image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/13/6f/8d/caption.jpg?w=1400&h=800&s=1" },
+              { time: "", name: "龍山寺", desc: "1738年に創建された、台北で最も古く格式高い寺院。仏教と道教の神様が数多く同居し、学業、恋愛、仕事などあらゆる願い事にご利益があると言われる、台湾最強のパワースポットです。", mapQuery: "龍山寺", wikiQuery: "艋舺龍山寺", image: "https://images.unsplash.com/photo-1600109918231-158a9e6af8c0?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "西門町 (西門紅楼/16工房)", desc: "「台北の原宿」とも呼ばれる、若者文化やサブカルチャーの発信地。歴史的建造物である八角形の「西門紅楼」には、台湾の若手クリエイターが手がける雑貨店などが集まる「16工房」が入っています。", mapQuery: "西門紅楼", wikiQuery: "西門町", image: "https://images.unsplash.com/photo-1583335513577-224b12745305?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "迪化街", desc: "19世紀後半から問屋街として栄え、美しいバロック調の建築が連なるレトロなストリート。漢方薬、ドライフルーツ、からすみなどを扱う老舗が並び、お土産探しや街歩きにぴったりのエリアです。", mapQuery: "迪化街", wikiQuery: "迪化街", image: "https://images.unsplash.com/photo-1577908993883-7c30a476dbb3?auto=format&fit=crop&w=600&q=80" }
             ]
           },
           {
@@ -243,14 +238,13 @@
             bgClass: "bg-day6-bg", cardClass: "bg-day6-card", borderClass: "border-day6-border", textClass: "text-day6-text",
             routeUrl: "https://www.google.com/maps/search/?api=1&query=台湾桃園国際空港",
             spots: [
-              { time: "", name: "空港観光", desc: "出発まで、空港内でのんびりお土産探しや食事を。", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" },
+              { time: "", name: "空港観光", desc: "出発前の時間を活用して、広大な桃園国際空港を散策。免税店での最後のお買い物や、台湾グルメを楽しめる充実したフードコート、モダンなラウンジなどでゆったりとお過ごしいただけます。", mapQuery: "台湾桃園国際空港", image: "https://culturize.org/media/wp-content/uploads/2023/12/e1c504d46c997a9778d3f42e021f20f0.jpeg" },
               { transit: "40分" },
-              { time: "15:30", name: "台湾桃園国際空港", desc: "Departure. 気をつけて帰ってきてくださいね！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
+              { time: "15:30", name: "台湾桃園国際空港", desc: "楽しかった台湾旅行もいよいよ終わりです。入国時とは違うターミナルの景色を眺めながら、素晴らしい旅の思い出とともに帰国の途に就きます。お気をつけて！", mapQuery: "台湾桃園国際空港", wikiQuery: "台湾桃園国際空港", image: "https://images.unsplash.com/photo-1542308693-01bc72db7dc1?auto=format&fit=crop&w=600&q=80" }
             ]
           }
         ],
         async init() {
-          // 初期化時に、Wikipedia APIを使って本物の写真を自動取得して差し替える
           for (let i = 0; i < this.itinerary.length; i++) {
             for (let j = 0; j < this.itinerary[i].spots.length; j++) {
               let spot = this.itinerary[i].spots[j];
@@ -266,7 +260,6 @@
         },
         async fetchWikiImage(query) {
           try {
-            // WikipediaのAPIを叩いてメイン画像を取得
             const url = `https://ja.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=800&origin=*`;
             const res = await fetch(url);
             const data = await res.json();
