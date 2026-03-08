@@ -22,6 +22,7 @@
             rounded: ['"M PLUS Rounded 1c"', 'sans-serif'],
           },
           colors: {
+            info: { bg: '#f8fafc', card: '#ffffff', border: '#cbd5e1', text: '#334155' }, // インフォタブ用
             day1: { bg: '#fff7ed', card: '#ffedd5', border: '#fdba74', text: '#ea580c' },
             day2: { bg: '#f0fdf4', card: '#dcfce7', border: '#86efac', text: '#16a34a' },
             day3: { bg: '#fdf2f8', card: '#fce7f3', border: '#f9a8d4', text: '#db2777' },
@@ -57,6 +58,12 @@
       background-size: 2px 8px;
       z-index: 0;
     }
+
+    /* チェックボックスのカスタムスタイル */
+    .checklist-input:checked + span {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="tripApp()">
@@ -69,7 +76,7 @@
     <template x-for="(day, index) in itinerary" :key="index">
       <button 
         @click="activeTab = index; window.scrollTo({top: 0, behavior: 'smooth'})" 
-        class="flex-none w-[28%] py-3 px-1 text-center transition-all duration-300 relative border-b-4"
+        class="flex-none min-w-[76px] px-2 py-3 text-center transition-all duration-300 relative border-b-4"
         :class="[
           activeTab === index ? day.textClass : 'text-gray-400 border-transparent',
           activeTab === index ? day.borderClass : ''
@@ -82,50 +89,173 @@
 
   <main class="p-4 pb-32 max-w-lg mx-auto min-h-screen transition-colors duration-500" :class="itinerary[activeTab].bgClass">
     
-    <div class="mb-4 flex justify-end" x-show="itinerary[activeTab].routeUrl" x-transition>
-      <a :href="itinerary[activeTab].routeUrl" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full shadow-sm bg-white border cursor-pointer active:scale-95 transition-transform"
-         :class="itinerary[activeTab].borderClass">
-        <i class="ph ph-map-trifold text-xl" :class="itinerary[activeTab].textClass"></i>
-        <span class="text-sm font-bold" :class="itinerary[activeTab].textClass">この日のルートをMapで開く</span>
-      </a>
-    </div>
+    <template x-if="!itinerary[activeTab].isInfo">
+      <div>
+        <div class="mb-4 flex justify-end" x-show="itinerary[activeTab].routeUrl" x-transition>
+          <a :href="itinerary[activeTab].routeUrl" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full shadow-sm bg-white border cursor-pointer active:scale-95 transition-transform"
+             :class="itinerary[activeTab].borderClass">
+            <i class="ph ph-map-trifold text-xl" :class="itinerary[activeTab].textClass"></i>
+            <span class="text-sm font-bold" :class="itinerary[activeTab].textClass">この日のルートをMapで開く</span>
+          </a>
+        </div>
 
-    <div class="relative mt-2">
-      <template x-for="(spot, spotIndex) in itinerary[activeTab].spots" :key="spotIndex">
-        <div>
-          <template x-if="spot.transit">
-            <div class="relative pl-16 py-3">
-              <div class="timeline-dash"></div>
-              <div class="text-xs font-bold text-gray-500 bg-white/80 inline-block px-2 rounded-full relative z-10">
-                <i class="ph ph-dots-three-vertical align-middle"></i> <span x-text="spot.transit"></span>
+        <div class="relative mt-2">
+          <template x-for="(spot, spotIndex) in itinerary[activeTab].spots" :key="spotIndex">
+            <div>
+              <template x-if="spot.transit">
+                <div class="relative pl-16 py-3">
+                  <div class="timeline-dash"></div>
+                  <div class="text-xs font-bold text-gray-500 bg-white/80 inline-block px-2 rounded-full relative z-10">
+                    <i class="ph ph-dots-three-vertical align-middle"></i> <span x-text="spot.transit"></span>
+                  </div>
+                </div>
+              </template>
+
+              <div x-show="!spot.transit" class="timeline-item relative pl-16 mb-6">
+                <div class="timeline-line absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center">
+                  <div class="w-12 text-right pr-3 pt-1">
+                    <span class="text-[11px] font-bold text-gray-500" x-text="spot.time || ''"></span>
+                  </div>
+                  <div class="w-3 h-3 rounded-full border-2 bg-white absolute top-1.5 left-[22px] z-10 shadow-sm" :class="itinerary[activeTab].borderClass"></div>
+                </div>
+
+                <div @click="openModal(spot)" class="rounded-xl p-4 shadow-sm border cursor-pointer active:scale-95 transition-transform" :class="[itinerary[activeTab].cardClass, itinerary[activeTab].borderClass]">
+                  <h3 class="font-rounded text-lg font-bold mb-1" :class="itinerary[activeTab].textClass" x-text="spot.name"></h3>
+                  <p class="text-xs text-gray-600 line-clamp-3" x-text="spot.desc"></p>
+                  
+                  <div class="mt-3 h-28 rounded-lg overflow-hidden relative bg-gray-200">
+                    <img :src="spot.image" class="w-full h-full object-cover opacity-90 transition-opacity duration-300" alt="">
+                    <div class="absolute inset-0 bg-black/10 flex items-center justify-center">
+                      <span class="bg-black/50 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">詳細を見る</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </template>
+        </div>
+      </div>
+    </template>
 
-          <div x-show="!spot.transit" class="timeline-item relative pl-16 mb-6">
-            <div class="timeline-line absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center">
-              <div class="w-12 text-right pr-3 pt-1">
-                <span class="text-[11px] font-bold text-gray-500" x-text="spot.time || ''"></span>
-              </div>
-              <div class="w-3 h-3 rounded-full border-2 bg-white absolute top-1.5 left-[22px] z-10 shadow-sm" :class="itinerary[activeTab].borderClass"></div>
+    <template x-if="itinerary[activeTab].isInfo">
+      <div class="space-y-6">
+        
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
+            <i class="ph ph-buildings text-xl text-slate-700"></i>
+            <h3 class="font-rounded font-bold text-slate-800">宿泊先 (HOTEL)</h3>
+          </div>
+          <div class="p-5">
+            <p class="text-xs text-slate-500 mb-1">宿泊期間: 2026年4月2日〜4月7日 (5泊) / クラシックツインルーム</p>
+            <h4 class="font-bold text-lg text-slate-800 mb-4">ガイドホテル台北八徳館</h4>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 relative">
+              <span class="absolute -top-3 left-4 bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-1 rounded">タクシー運転手さんに見せる用</span>
+              <p class="text-xl font-bold text-gray-900 text-center tracking-widest mt-2">敦謙國際大飯店 台北八德館</p>
+              <p class="text-sm text-gray-600 text-center mt-1">台北市松山區八德路四段16号</p>
             </div>
 
-            <div @click="openModal(spot)" class="rounded-xl p-4 shadow-sm border cursor-pointer active:scale-95 transition-transform" :class="[itinerary[activeTab].cardClass, itinerary[activeTab].borderClass]">
-              <h3 class="font-rounded text-lg font-bold mb-1" :class="itinerary[activeTab].textClass" x-text="spot.name"></h3>
-              <p class="text-xs text-gray-600 line-clamp-3" x-text="spot.desc"></p>
-              
-              <div class="mt-3 h-28 rounded-lg overflow-hidden relative bg-gray-200">
-                <img :src="spot.image" class="w-full h-full object-cover opacity-90 transition-opacity duration-300" alt="">
-                <div class="absolute inset-0 bg-black/10 flex items-center justify-center">
-                  <span class="bg-black/50 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">詳細を見る</span>
+            <a href="https://www.google.com/maps/search/?api=1&query=敦謙國際大飯店+台北八德館" target="_blank" rel="noopener noreferrer" 
+               class="mt-4 flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-sm transition-colors w-full active:scale-95">
+              <i class="ph ph-map-pin text-xl"></i>
+              <span>Google Mapでホテルを開く</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
+            <i class="ph ph-airplane-tilt text-xl text-slate-700"></i>
+            <h3 class="font-rounded font-bold text-slate-800">フライト情報 (FLIGHT)</h3>
+          </div>
+          <div class="p-5 space-y-4">
+            
+            <div class="border-l-4 border-blue-400 pl-4 py-1">
+              <p class="text-xs font-bold text-blue-500 mb-1">【往路】 4月2日(木) | スクート TR877便</p>
+              <div class="flex items-center gap-3">
+                <div>
+                  <p class="text-xl font-bold">12:30</p>
+                  <p class="text-[10px] text-gray-500">成田(NRT) T1</p>
+                </div>
+                <i class="ph ph-arrow-right text-gray-400"></i>
+                <div>
+                  <p class="text-xl font-bold">15:10</p>
+                  <p class="text-[10px] text-gray-500">桃園(TPE) T1</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-l-4 border-orange-400 pl-4 py-1">
+              <p class="text-xs font-bold text-orange-500 mb-1">【復路】 4月7日(火) | スクート TR874便</p>
+              <div class="flex items-center gap-3">
+                <div>
+                  <p class="text-xl font-bold">15:30</p>
+                  <p class="text-[10px] text-gray-500">桃園(TPE) T1</p>
+                </div>
+                <i class="ph ph-arrow-right text-gray-400"></i>
+                <div>
+                  <p class="text-xl font-bold">20:00</p>
+                  <p class="text-[10px] text-gray-500">成田(NRT) T1</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </template>
-    </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
+            <i class="ph ph-check-square-offset text-xl text-slate-700"></i>
+            <h3 class="font-rounded font-bold text-slate-800">持ち物チェックリスト</h3>
+          </div>
+          <div class="p-5 space-y-3">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
+              <span class="text-sm font-bold text-slate-700">パスポート（有効期限確認！）</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
+              <span class="text-sm font-bold text-slate-700">航空券（Eチケット控え / 画面保存）</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
+              <span class="text-sm font-bold text-slate-700">現金（台湾ドル）＆クレジットカード</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
+              <span class="text-sm font-bold text-slate-700">通信手段（SIMカード / eSIM / Wi-Fi）</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
+              <span class="text-sm font-bold text-slate-700">モバイルバッテリー＆変換プラグ不要（Aタイプ）</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checklist-input w-5 h-5 text-blue-600 rounded border-gray-300">
+              <span class="text-sm font-bold text-slate-700">常備薬＆ポケットティッシュ・ウェットティッシュ</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
+            <i class="ph ph-warning-circle text-xl text-slate-700"></i>
+            <h3 class="font-rounded font-bold text-slate-800">緊急時・お役立ちメモ</h3>
+          </div>
+          <div class="p-5 text-sm space-y-3">
+            <p><span class="font-bold text-red-500">警察:</span> 110</p>
+            <p><span class="font-bold text-red-500">救急・消防:</span> 119</p>
+            <p><span class="font-bold text-slate-700">交流協会(大使館的役割):</span> 02-2713-8000</p>
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 mt-4 text-xs text-slate-600">
+              <strong>💡 台湾の基本ルール</strong><br>
+              ・MRT(地下鉄)内は飲食絶対禁止（ガムや水もNG、罰金あり）。<br>
+              ・チップの習慣は基本的にありません。<br>
+              ・お店や電車内は冷房が強めなので、サッと羽織れる上着があると便利です。
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
   </main>
 
   <div x-show="isModalOpen" style="display: none;" class="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" x-transition.opacity>
@@ -169,6 +299,10 @@
         isModalOpen: false,
         currentSpot: {},
         itinerary: [
+          {
+            date: "Info", area: "基本情報", isInfo: true,
+            bgClass: "bg-info-bg", cardClass: "bg-info-card", borderClass: "border-info-border", textClass: "text-info-text",
+          },
           {
             date: "4/2(木)", area: "台北", 
             bgClass: "bg-day1-bg", cardClass: "bg-day1-card", borderClass: "border-day1-border", textClass: "text-day1-text",
@@ -214,7 +348,7 @@
               { transit: "40分" },
               { time: "", name: "淡水老街", desc: "淡水河沿いに続く、心地よい川風を感じられる遊歩道と商店街。海鮮の揚げ物や名物の鉄蛋（黒く煮込まれた硬い卵）、巨大なソフトクリームなどを食べ歩きしながら散策を楽しめます。", mapQuery: "淡水老街", image: "https://www.travel.taipei/content/images/attractions/430669/1024x768_attractions-image-ipkhsqnbgkkyoehrzgvnyg.jpg" },
               { time: "", name: "淡水礼拝堂", desc: "1933年に建てられた、ゴシック様式の美しい赤レンガ造りの長老派教会。ステンドグラスや高くそびえる鐘楼が異国情緒を漂わせ、淡水の歴史的な風景のアクセントになっています。", mapQuery: "淡水礼拝堂", image: "https://cdn.4travel.jp/img/thumbnails/imk/tips_pict/19/98/79/650x450_19987988.jpg?updated_at=1763256705" },
-              { time: "", name: "正宗阿給老店", desc: "油揚げの中に春雨を詰め、魚のすり身で塞いで特製甘辛ソースをかけた淡水発祥のローカルフード「阿給（アゲ）」の超人気老舗店。地元の人々にも愛される素朴な味わいです。", mapQuery: "正宗阿給老店", image: "https://tblg.k-img.com/restaurant/images/Rvw/65323/150x150_square_65323254.jpg" },
+              { time: "", name: "正宗阿給老店", desc: "油揚げの中に春雨を詰め、魚のすり身で塞いで特製甘辛ソースをかけた淡水発祥のローカルフード「阿給（アゲ）」の超人気老舗店。地元の人々にも愛される素朴な味わいです。", mapQuery: "正宗阿給老店", image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/a8/ec/12/caption.jpg?w=800&h=500&s=1" },
               { time: "", name: "紅毛城", desc: "17世紀にスペイン人によって建造され、その後オランダ人やイギリス人に引き継がれた台湾最古級の要塞建築。美しい赤レンガの洋館と、高台から見下ろす淡水河の景色が魅力です。", mapQuery: "紅毛城", image: "https://res.klook.com/image/upload/w_500,h_313,c_fill,q_85/activities/axzmqc4ghnaazprkl67h.jpg" },
               { time: "", name: "雲門劇場", desc: "国際的に活躍する台湾のコンテンポラリーダンス舞踊団「雲門舞集」の拠点。緑豊かな自然と見事に調和した、銅葺き屋根とガラス張りの現代建築は芸術的な美しさです。", mapQuery: "雲門劇場", image: "https://architecture-tour.com/image/world-taiwan-cloud-gate-theater_image1.jpg" }
             ]
@@ -246,6 +380,7 @@
         ],
         async init() {
           for (let i = 0; i < this.itinerary.length; i++) {
+            if (this.itinerary[i].isInfo) continue;
             for (let j = 0; j < this.itinerary[i].spots.length; j++) {
               let spot = this.itinerary[i].spots[j];
               if (!spot.transit && spot.wikiQuery) {
